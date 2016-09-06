@@ -9,7 +9,9 @@ defmodule Debpress do
 			architecture: nil,
 			maintainer: nil,
 			installed_size_kb: nil,
+			pre_depends: nil,
 			depends: nil,
+			provides: nil,
 			# See docs/sections.html
 			section: nil,
 			priority: nil,
@@ -21,7 +23,9 @@ defmodule Debpress do
 			architecture: String.t,
 			maintainer: String.t,
 			installed_size_kb: integer() | nil,
+			pre_depends: String.t | nil,
 			depends: String.t | nil,
+			provides: String.t | nil,
 			section: String.t | nil,
 			priority: Control.priority | nil,
 			short_description: String.t,
@@ -31,7 +35,7 @@ defmodule Debpress do
 
 	@spec prefix_every_line(String.t, String.t) :: String.t
 	defp prefix_every_line(text, prefix) do
-		text |> String.split("\n") |> Enum.map(fn line -> prefix <> line end) |> String.join("\n")
+		text |> String.split("\n") |> Enum.map(fn line -> prefix <> line end) |> Enum.join("\n")
 	end
 
 	@spec make_control(Control) :: String.t
@@ -42,36 +46,15 @@ defmodule Debpress do
 		Architecture: #{c.architecture}
 		Maintainer: #{c.maintainer}
 		"""
-
-		if c.installed_size_kb do
-			s = s <> "Installed-Size: #{c.installed_size_kb}\n"
-		end
-
-		if c.pre_depends do
-			s = s <> "Pre-Depends: #{c.pre_depends}\n"
-		end
-
-		if c.depends do
-			s = s <> "Depends: #{c.depends}\n"
-		end
-
-		if c.provides do
-			s = s <> "Provides: #{c.provides}\n"
-		end
-
-		if c.priority do
-			s = s <> "Priority: #{c.priority |> Atom.to_string}\n"
-		end
-
-		if c.section do
-			s = s <> "Section: #{c.section}\n"
-		end
-
+		s = if c.installed_size_kb, do: s <> "Installed-Size: #{c.installed_size_kb}\n", else: s
+		s = if c.pre_depends, do: s <> "Pre-Depends: #{c.pre_depends}\n", else: s
+		s = if c.depends, do: s <> "Depends: #{c.depends}\n", else: s
+		s = if c.provides, do: s <> "Provides: #{c.provides}\n", else: s
+		s = if c.priority, do: s <> "Priority: #{c.priority |> Atom.to_string}\n", else: s
+		s = if c.section, do: s <> "Section: #{c.section}\n", else: s
 		s = s <> "Description: #{c.short_description}\n"
-
-		if c.long_description do
-			s = s <> prefix_every_line(c.long_description, " ") <> "\n"
-		end
+		s = if c.long_description, do: s <> prefix_every_line(c.long_description, " ") <> "\n", else: s
+		s
 	end
 
 	@spec write_deb(String.t) :: none
