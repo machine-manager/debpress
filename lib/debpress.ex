@@ -1,65 +1,76 @@
 defmodule Debpress do
-	@type Priority.t :: :required | :important | :standard | :optional | :extra
+	@type Priority :: :required | :important | :standard | :optional | :extra
 
 	defmodule Control do
-		@enforce_keys [:name, :version, :architecture, :depends, :short_description]
-		defstruct
+		@enforce_keys [:name, :version, :architecture, :maintainer, :depends, :short_description]
+		defstruct \
 			name: nil,
 			version: nil,
 			architecture: nil,
-			maintainer: "Nobody <nobody@localhost>",
-			installed_size_kb: 0,
+			maintainer: nil,
+			installed_size_kb: nil,
 			depends: nil,
 			# See docs/sections.html
 			section: nil,
 			priority: nil,
-			short_description: nil
-			long_description: ""
-		@type t :: %User{name: String.t, age: non_neg_integer}
+			short_description: nil,
+			long_description: nil
+		@type t :: %Control{
+			name: String.t,
+			version: String.t,
+			architecture: String.t,
+			maintainer: String.t,
+			installed_size_kb: integer() | nil,
+			depends: String.t | nil,
+			section: String.t | nil,
+			priority: Priority | nil,
+			short_description: String.t,
+			long_description: String.t | nil
+		}
 	end
 
-	@spec prefix_every_line()
+	@spec prefix_every_line(String.t, String.t) :: String.t
 	defp prefix_every_line(text, prefix) do
-		text |> String.split("\n") |> Enum.map(fn line -> prefix <> line end)
+		text |> String.split("\n") |> Enum.map(fn line -> prefix <> line end) |> String.join("\n")
 	end
 
 	@spec make_control(Control) :: String.t
 	def make_control(c) do
-		"""
-		Package: #{name}
-		Version: #{version}
-		Architecture: #{architecture}
-		Maintainer: #{maintainer}
+		s = """
+		Package: #{c.name}
+		Version: #{c.version}
+		Architecture: #{c.architecture}
+		Maintainer: #{c.maintainer}
 		"""
 
-		if installed_size_kb do
+		if c.installed_size_kb do
 			s = s <> "Installed-Size: #{c.installed_size_kb}\n"
 		end
 
-		if pre_depends do
+		if c.pre_depends do
 			s = s <> "Pre-Depends: #{c.pre_depends}\n"
 		end
 
-		if depends do
+		if c.depends do
 			s = s <> "Depends: #{c.depends}\n"
 		end
 
-		if provides do
+		if c.provides do
 			s = s <> "Provides: #{c.provides}\n"
 		end
 
-		if priority do
+		if c.priority do
 			s = s <> "Priority: #{c.priority |> Atom.to_string}\n"
 		end
 
-		if section do
+		if c.section do
 			s = s <> "Section: #{c.section}\n"
 		end
 
 		s = s <> "Description: #{c.short_description}\n"
 
-		if long_description do
-			s = s <> prefix_every_line(long_description, " ") <> "\n"
+		if c.long_description do
+			s = s <> prefix_every_line(c.long_description, " ") <> "\n"
 		end
 	end
 
