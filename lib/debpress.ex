@@ -1,4 +1,8 @@
 defmodule Debpress do
+	defmodule BadControl do
+		defexception message: nil
+	end
+
 	defmodule Control do
 		@type priority :: :required | :important | :standard | :optional | :extra
 
@@ -22,7 +26,7 @@ defmodule Debpress do
 			version: String.t,
 			architecture: String.t,
 			maintainer: String.t,
-			installed_size_kb: integer() | nil,
+			installed_size_kb: non_neg_integer() | nil,
 			pre_depends: String.t | nil,
 			depends: String.t | nil,
 			provides: String.t | nil,
@@ -33,11 +37,13 @@ defmodule Debpress do
 		}
 	end
 
+	@doc "Prefixes every line in some multi-line text with a given prefix string"
 	@spec prefix_every_line(String.t, String.t) :: String.t
 	defp prefix_every_line(text, prefix) do
 		text |> String.split("\n") |> Enum.map(fn line -> prefix <> line end) |> Enum.join("\n")
 	end
 
+	@doc "Takes a Control struct and returns a string containing a valid control file"
 	@spec make_control(Control) :: String.t
 	def make_control(c) do
 		s = """
