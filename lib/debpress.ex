@@ -37,31 +37,35 @@ defmodule Debpress do
 		}
 	end
 
-	@doc "Prefixes every line in some multi-line text with a given prefix string"
+	@docp "Prefixes every line in some multi-line text with a given prefix string"
 	@spec prefix_every_line(String.t, String.t) :: String.t
 	defp prefix_every_line(text, prefix) do
 		text |> String.split("\n") |> Enum.map(fn line -> prefix <> line end) |> Enum.join("\n")
 	end
 
 	@doc "Takes a Control struct and returns a string containing a valid control file"
-	@spec make_control(Control) :: String.t
-	def make_control(c) do
+	@spec control_file(Control) :: String.t
+	def control_file(c) do
+		import Debpress.Util, only: [append_if: 3]
+
 		s = """
 		Package: #{c.name}
 		Version: #{c.version}
 		Architecture: #{c.architecture}
 		Maintainer: #{c.maintainer}
 		"""
-		s = if c.installed_size_kb, do: s <> "Installed-Size: #{c.installed_size_kb}\n", else: s
-		s = if c.pre_depends, do: s <> "Pre-Depends: #{c.pre_depends}\n", else: s
-		s = if c.depends, do: s <> "Depends: #{c.depends}\n", else: s
-		s = if c.provides, do: s <> "Provides: #{c.provides}\n", else: s
-		s = if c.priority, do: s <> "Priority: #{c.priority |> Atom.to_string}\n", else: s
-		s = if c.section, do: s <> "Section: #{c.section}\n", else: s
+		|> append_if(c.installed_size_kb, "Installed-Size: #{c.installed_size_kb}\n")
+		|> append_if(c.pre_depends, "Pre-Depends: #{c.pre_depends}\n")
+		|> append_if(c.depends, "Depends: #{c.depends}\n")
+		|> append_if(c.provides, "Provides: #{c.provides}\n")
+		|> append_if(c.priority, "Priority: #{c.priority |> Atom.to_string}\n")
+		|> append_if(c.section, "Section: #{c.section}\n")
 		s = s <> "Description: #{c.short_description}\n"
-		s = if c.long_description, do: s <> prefix_every_line(c.long_description, " ") <> "\n", else: s
-		s
+		s |> append_if(c.long_description, prefix_every_line(c.long_description, " ") <> "\n")
 	end
+	# TODO: Tests for above!
+	# Interactive testing:
+	# IO.write Debpress.control_file(%Debpress.Control{name: "hi", version: "0.1", architecture: "all", maintainer: "nobody", depends: "python-twisted", short_description: "stuff", long_description: "more stuff\nand more"}
 
 	@spec write_deb(String.t) :: none
 	def write_deb(deb_file) do

@@ -11,4 +11,12 @@ defmodule Debpress.Util do
 				raise File.Error, reason: reason, action: "rm", path: path
 		end
 	end
+
+	def append_if(acc, condition, string) do
+		if condition do
+			acc <> string
+		else
+			acc
+		end
+	end
 end
