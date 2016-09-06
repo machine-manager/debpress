@@ -1,7 +1,7 @@
 defmodule Debpress do
-	@type Priority :: :required | :important | :standard | :optional | :extra
-
 	defmodule Control do
+		@type priority :: :required | :important | :standard | :optional | :extra
+
 		@enforce_keys [:name, :version, :architecture, :maintainer, :depends, :short_description]
 		defstruct \
 			name: nil,
@@ -23,7 +23,7 @@ defmodule Debpress do
 			installed_size_kb: integer() | nil,
 			depends: String.t | nil,
 			section: String.t | nil,
-			priority: Priority | nil,
+			priority: Control.priority | nil,
 			short_description: String.t,
 			long_description: String.t | nil
 		}
