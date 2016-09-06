@@ -32,7 +32,7 @@ defmodule Debpress do
 		Maintainer: #{maintainer}
 		"""
 
-		if installed_size_kb, do
+		if installed_size_kb do
 			s = s <> "Installed-Size: #{c.installed_size_kb}\n"
 		end
 
