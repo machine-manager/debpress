@@ -48,7 +48,7 @@ defmodule Debpress do
 	def control_file(c) do
 		import Debpress.Util, only: [append_if: 3]
 
-		s = """
+		"""
 		Package: #{c.name}
 		Version: #{c.version}
 		Architecture: #{c.architecture}
@@ -60,8 +60,8 @@ defmodule Debpress do
 		|> append_if(c.provides, "Provides: #{c.provides}\n")
 		|> append_if(c.priority, "Priority: #{c.priority |> Atom.to_string}\n")
 		|> append_if(c.section, "Section: #{c.section}\n")
-		s = s <> "Description: #{c.short_description}\n"
-		s |> append_if(c.long_description, prefix_every_line(c.long_description, " ") <> "\n")
+		|> append_if(true, "Description: #{c.short_description}\n")
+		|> append_if(c.long_description, prefix_every_line(c.long_description, " ") <> "\n")
 	end
 	# TODO: Tests for above!
 	# Interactive testing:
