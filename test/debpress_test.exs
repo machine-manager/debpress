@@ -7,7 +7,7 @@ defmodule DebpressTest do
 
 		# We use eval_string because otherwise this test file can't
 		# even be compiled.
-		assert_raise ArgumentError, msg, fn ->
+		_ = assert_raise ArgumentError, msg, fn ->
 			Code.eval_string(~s(%Debpress.Control{}))
 		end
 
@@ -78,7 +78,7 @@ defmodule DebpressTest do
 			version: "0.1",
 			architecture: "all",
 			maintainer: "nobody",
-			installed_size_kb: 101,
+			installed_size_kb: "101",
 			pre_depends: ["dpkg (>= 1.14.0)"],
 			depends: ["python-twisted", "python (>= 2.7)"],
 			provides: ["www-browser", "some-other-thing"],

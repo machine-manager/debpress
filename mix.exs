@@ -13,7 +13,7 @@ defmodule Debpress.Mixfile do
 	end
 
 	def application do
-		[applications: [:logger]]
+		[applications: [:logger, :ex_unit]]
 	end
 
 	defp deps do

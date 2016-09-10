@@ -64,6 +64,16 @@ defmodule Debpress do
 		|> append_if(c.long_description, prefix_every_line(c.long_description, " ") <> "\n")
 	end
 
+	@spec write_control_tar_gz(String.t, %{
+		optional(:preinst) => String.t,
+		optional(:postinst) => String.t,
+		optional(:prerm) => String.t,
+		optional(:postrm) => String.t
+	}) :: nil
+	def write_control_tar_gz(control, meta) do
+
+	end
+
 	@spec write_deb(String.t) :: nil
 	def write_deb(deb_file) do
 		Debpress.Util.rm_f!(deb_file)
