@@ -2,6 +2,57 @@ defmodule DebpressTest do
 	use ExUnit.Case
 	doctest Debpress
 
+	test "can't construct a Control without mandatory keys" do
+		msg = ~r(following keys must also be given)
+
+		# We use eval_string because otherwise this test file can't
+		# even be compiled.
+		assert_raise ArgumentError, msg, fn ->
+			Code.eval_string(~s(%Debpress.Control{}))
+		end
+
+		assert_raise ArgumentError, msg, fn ->
+			Code.eval_string(~s(%Debpress.Control{name: "name"}))
+		end
+
+		assert_raise ArgumentError, msg, fn ->
+			Code.eval_string(~s(%Debpress.Control{name: "name", version: "1.0"}))
+		end
+
+		assert_raise ArgumentError, msg, fn ->
+			Code.eval_string(~s(%Debpress.Control{name: "name", version: "1.0", architecture: "amd64"}))
+		end
+
+		assert_raise ArgumentError, msg, fn ->
+			Code.eval_string(~s(%Debpress.Control{
+				name: "name",
+				version: "1.0",
+				architecture: "amd64",
+				maintainer: "nobody"
+			}))
+		end
+
+		assert_raise ArgumentError, msg, fn ->
+			Code.eval_string(~s(%Debpress.Control{
+				name: "name",
+				version: "1.0",
+				architecture: "amd64",
+				maintainer: "nobody",
+				depends: []
+			}))
+		end
+
+		# This one works
+		Code.eval_string(~s(%Debpress.Control{
+			name: "name",
+			version: "1.0",
+			architecture: "amd64",
+			maintainer: "nobody",
+			depends: [],
+			short_description: "hello"
+		}))
+	end
+
 	test "control_file works when given bare minimum Control" do
 		control = %Debpress.Control{
 			name: "demo",
