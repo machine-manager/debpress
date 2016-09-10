@@ -13,9 +13,9 @@ defmodule Debpress do
 			architecture: nil,
 			maintainer: nil,
 			installed_size_kb: nil,
-			pre_depends: nil,
-			depends: nil,
-			provides: nil,
+			pre_depends: [],
+			depends: [],
+			provides: [],
 			# See docs/sections.html
 			section: nil,
 			priority: nil,
@@ -27,9 +27,9 @@ defmodule Debpress do
 			architecture: String.t,
 			maintainer: String.t,
 			installed_size_kb: non_neg_integer() | nil,
-			pre_depends: String.t | nil,
-			depends: String.t | nil,
-			provides: String.t | nil,
+			pre_depends: [String.t],
+			depends: [String.t],
+			provides: [String.t],
 			section: String.t | nil,
 			priority: Control.priority | nil,
 			short_description: String.t,
@@ -55,17 +55,14 @@ defmodule Debpress do
 		Maintainer: #{c.maintainer}
 		"""
 		|> append_if(c.installed_size_kb, "Installed-Size: #{c.installed_size_kb}\n")
-		|> append_if(c.pre_depends, "Pre-Depends: #{c.pre_depends}\n")
-		|> append_if(c.depends, "Depends: #{c.depends}\n")
-		|> append_if(c.provides, "Provides: #{c.provides}\n")
+		|> append_if(c.pre_depends != [], "Pre-Depends: #{c.pre_depends |> Enum.join(", ")}\n")
+		|> append_if(c.depends != [], "Depends: #{c.depends |> Enum.join(", ")}\n")
+		|> append_if(c.provides != [], "Provides: #{c.provides |> Enum.join(", ")}\n")
 		|> append_if(c.priority, "Priority: #{c.priority |> Atom.to_string}\n")
 		|> append_if(c.section, "Section: #{c.section}\n")
 		|> append_if(true, "Description: #{c.short_description}\n")
 		|> append_if(c.long_description, prefix_every_line(c.long_description, " ") <> "\n")
 	end
-	# TODO: Tests for above!
-	# Interactive testing:
-	# IO.write Debpress.control_file(%Debpress.Control{name: "hi", version: "0.1", architecture: "all", maintainer: "nobody", depends: "python-twisted", short_description: "stuff", long_description: "more stuff\nand more"}
 
 	@spec write_deb(String.t) :: none
 	def write_deb(deb_file) do
