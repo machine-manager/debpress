@@ -3,6 +3,7 @@ defmodule Debpress.Util do
 	Unlinks `path` if it exists.  Must be a file or an empty directory.
 	The parent directories must exist in any case.
 	"""
+	@spec rm_f!(String.t) :: nil
 	def rm_f!(path) do
 		case File.rm(path) do
 			:ok -> nil
@@ -20,7 +21,7 @@ defmodule Debpress.Util do
 		|> append_if(true, "Description: #{c.short_description}\n")
 		|> append_if(c.long_description, prefix_every_line(c.long_description, " ") <> "\n")
 
-	expression is not evaluated unless evaluation of `clause` is truthy.  This avoids
+	`expression` is not evaluated unless evaluation of `clause` is truthy.  This avoids
 	blowing up on nils and other unexpected values.
 	"""
 	defmacro append_if(acc, clause, expression) do

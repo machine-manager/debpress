@@ -60,13 +60,14 @@ defmodule Debpress do
 		|> append_if(c.provides != [], "Provides: #{c.provides |> Enum.join(", ")}\n")
 		|> append_if(c.priority, "Priority: #{c.priority |> Atom.to_string}\n")
 		|> append_if(c.section, "Section: #{c.section}\n")
-		|> append_if(true, "Description: #{c.short_description}\n")
+		|> Kernel.<>("Description: #{c.short_description}\n")
 		|> append_if(c.long_description, prefix_every_line(c.long_description, " ") <> "\n")
 	end
 
-	@spec write_deb(String.t) :: none
+	@spec write_deb(String.t) :: nil
 	def write_deb(deb_file) do
 		Debpress.Util.rm_f!(deb_file)
-		System.cmd("ar", ["-qc", deb_file, "debian-binary", "control.tar.gz", "data.tar.xz"])
+		{_, 0} = System.cmd("ar", ["-qc", deb_file, "debian-binary", "control.tar.gz", "data.tar.xz"])
+		nil
 	end
 end
