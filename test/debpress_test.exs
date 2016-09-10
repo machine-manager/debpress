@@ -46,8 +46,8 @@ defmodule DebpressTest do
 		Pre-Depends: dpkg (>= 1.14.0)
 		Depends: python-twisted, python (>= 2.7)
 		Provides: www-browser, some-other-thing
-		Section: misc
 		Priority: optional
+		Section: misc
 		Description: a demo
 		 It does
 		 so many things
