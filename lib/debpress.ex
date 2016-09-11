@@ -3,6 +3,10 @@ defmodule Debpress do
 		defexception message: nil
 	end
 
+	defmodule StringPath do
+		@type t :: :binary
+	end
+
 	defmodule Control do
 		@type priority :: :required | :important | :standard | :optional | :extra
 
@@ -64,20 +68,23 @@ defmodule Debpress do
 		|> append_if(c.long_description, prefix_every_line(c.long_description, " ") <> "\n")
 	end
 
-	@spec write_control_tar_gz(String.t, %{
+	@spec write_control_tar_gz(StringPath.t, StringPath.t, %{
 		optional(:preinst) => String.t,
 		optional(:postinst) => String.t,
 		optional(:prerm) => String.t,
 		optional(:postrm) => String.t
 	}) :: nil
-	def write_control_tar_gz(control, meta) do
-
+	def write_control_tar_gz(control_tar_gz, control, meta) do
+		# create temporary directory
+		# write control file
+		# write meta files
+		# tar -cf control.tar.gz *
 	end
 
-	@spec write_deb(String.t) :: nil
-	def write_deb(deb_file) do
-		Debpress.Util.rm_f!(deb_file)
-		{_, 0} = System.cmd("ar", ["-qc", deb_file, "debian-binary", "control.tar.gz", "data.tar.xz"])
+	@spec write_deb(StringPath.t, StringPath.t, StringPath.t) :: nil
+	def write_deb(out_deb, control_tar_gz, data_tar_xz) do
+		Debpress.Util.rm_f!(out_deb)
+		{_, 0} = System.cmd("ar", ["-qc", out_deb, "debian-binary", control_tar_gz, data_tar_xz])
 		nil
 	end
 end
