@@ -36,11 +36,8 @@ defmodule Debpress.Util do
 
 	@spec make_temp_path(String.t, String.t) :: String.t
 	def make_temp_path(prefix, extension) do
-		random =
-			:crypto.strong_rand_bytes(21)
-			|> Base.encode32()
-			|> Kernel.<>(extension)
-
-		Path.join(System.tmp_dir, "#{prefix}-#{random}.#{extension}")
+		random = :crypto.strong_rand_bytes(16) |> Base.url_encode64(padding: false)
+		Path.join(System.tmp_dir, "#{prefix}-#{random}")
+		|> append_if(String.first(extension), ".#{extension}")
 	end
 end
