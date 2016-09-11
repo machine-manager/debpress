@@ -108,8 +108,39 @@ defmodule DebpressTest do
 		"""
 	end
 
-	test "write_control_tar_gz works" do
+	test "write_control_tar_gz works with empty scripts Map" do
+		temp = Debpress.Util.temp_dir("debpress_test")
+		control_tar_gz = Path.join(temp, "control.tar.gz")
 
+		Debpress.write_control_tar_gz(control_tar_gz, "my control file", %{})
+
+		assert File.regular?(control_tar_gz)
+		size = File.stat!(control_tar_gz).size
+		assert size > 0
+	end
+
+	test "write_control_tar_gz works with non-empty scripts Map" do
+		temp = Debpress.Util.temp_dir("debpress_test")
+		control_tar_gz = Path.join(temp, "control.tar.gz")
+
+		Debpress.write_control_tar_gz(control_tar_gz, "my control file", %{preinst: "preinst"})
+
+		assert File.regular?(control_tar_gz)
+		size = File.stat!(control_tar_gz).size
+		assert size > 0
+
+		scripts = %{preinst: "preinst", postinst: "postinst", prerm: "prerm", postrm: "postrm"}
+		Debpress.write_control_tar_gz(control_tar_gz, "my control file", scripts)
+
+		assert File.regular?(control_tar_gz)
+		size = File.stat!(control_tar_gz).size
+		assert size > 0
+	end
+
+	test "write_control_tar_gz raises UnexpectedScriptKey when given invalid key" do
+		assert_raise Debpress.UnexpectedScriptKey, fn ->
+			Debpress.write_control_tar_gz("", "my control file", %{invalid: ""})
+		end
 	end
 
 	test "write_deb works" do

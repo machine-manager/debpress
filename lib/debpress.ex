@@ -5,6 +5,10 @@ defmodule Debpress do
 		defexception message: nil
 	end
 
+	defmodule UnexpectedScriptKey do
+		defexception message: nil
+	end
+
 	defmodule StringPath do
 		@type t :: :binary
 	end
@@ -76,17 +80,33 @@ defmodule Debpress do
 		optional(:prerm) => String.t,
 		optional(:postrm) => String.t
 	}) :: nil
-	def write_control_tar_gz(control_tar_gz, control, meta) do
+	def write_control_tar_gz(control_tar_gz, control, scripts) do
+		allowed_script_keys = MapSet.new([:preinst, :postinst, :prerm, :postrm])
+
 		temp = Util.temp_dir("debpress")
-		File.write!(Path.join(temp, "control"), control)
-		for m <- meta do
-			if Map.get(meta, m) do
-				File.write!(Path.join(temp, Atom.to_string(m)), Map.get(meta, m))
+
+		for script_key <- Map.keys(scripts) do
+			if not MapSet.member?(allowed_script_keys, script_key) do
+				raise UnexpectedScriptKey,
+					message: """
+						Got unexpected key #{inspect script_key}, \
+						which is not one of #{inspect allowed_script_keys}
+						"""
 			end
+			script_path = Path.join(temp, Atom.to_string(script_key))
+			script = Map.get(scripts, script_key)
+			File.write!(script_path, script)
+			File.chmod!(script_path, 0o700)
 		end
 
-		meta_files = meta.keys() |> Enum.map(&Atom.to_string/1)
-		{_, 0} = System.cmd("tar", ["-C", temp, "-cf", control_tar_gz, "control"] ++ meta_files)
+		control_file = Path.join(temp, "control")
+		File.write!(control_file, control)
+		File.chmod!(control_file, 0o600)
+
+		script_files = Map.keys(scripts) |> Enum.map(&Atom.to_string/1)
+		{_, 0} = System.cmd("tar",
+			["--owner=root", "--group=root", "-C", temp, "-cf", control_tar_gz, "--", "control"] ++ script_files
+		)
 		nil
 	end
 
