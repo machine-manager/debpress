@@ -74,6 +74,8 @@ defmodule Debpress do
 		|> append_if(c.long_description, prefix_every_line(c.long_description, " ") <> "\n")
 	end
 
+	@allowed_script_keys MapSet.new([:preinst, :postinst, :prerm, :postrm])
+
 	@spec write_control_tar_gz(StringPath.t, StringPath.t, %{
 		optional(:preinst) => String.t,
 		optional(:postinst) => String.t,
@@ -81,16 +83,14 @@ defmodule Debpress do
 		optional(:postrm) => String.t
 	}) :: nil
 	def write_control_tar_gz(control_tar_gz, control, scripts) do
-		allowed_script_keys = MapSet.new([:preinst, :postinst, :prerm, :postrm])
-
 		temp = Util.temp_dir("debpress")
 
 		for script_key <- Map.keys(scripts) do
-			if not MapSet.member?(allowed_script_keys, script_key) do
+			if not MapSet.member?(@allowed_script_keys, script_key) do
 				raise UnexpectedScriptKey,
 					message: """
 						Got unexpected key #{inspect script_key}, \
-						which is not one of #{inspect allowed_script_keys}
+						which is not one of #{inspect @allowed_script_keys}
 						"""
 			end
 			script_path = Path.join(temp, Atom.to_string(script_key))
@@ -108,6 +108,12 @@ defmodule Debpress do
 			["--owner=root", "--group=root", "-C", temp, "-cf", control_tar_gz, "--", "control"] ++ script_files
 		)
 		nil
+	end
+
+	@doc "Runs tar with the right arguments (--owner=root, group=root) to create data.tar.xz"
+	@spec write_data_tar_xz(String.t) :: nil
+	def write_data_tar_xz(data_tar_xz) do
+
 	end
 
 	@spec write_deb(StringPath.t, StringPath.t, StringPath.t) :: nil
