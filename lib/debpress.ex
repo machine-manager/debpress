@@ -1,4 +1,6 @@
 defmodule Debpress do
+	alias Debpress.Util
+
 	defmodule BadControl do
 		defexception message: nil
 	end
@@ -75,16 +77,21 @@ defmodule Debpress do
 		optional(:postrm) => String.t
 	}) :: nil
 	def write_control_tar_gz(control_tar_gz, control, meta) do
-		# create temporary directory
-		# write control file
-		# write meta files
-		# tar -cf control.tar.gz *
+		temp = Util.temp_dir("debpress")
+		File.write!(Path.join(temp, "control"), control)
+		for m <- meta do
+			if Map.get(meta, m) do
+				File.write!(Path.join(temp, Atom.to_string(m)), Map.get(meta, m))
+			end
+		end
+
+		meta_files = meta.keys() |> Enum.map(&Atom.to_string/1)
+		{_, 0} = System.cmd("tar", ["-C", temp, "-cf", control_tar_gz, "control"] ++ meta_files)
+		nil
 	end
 
 	@spec write_deb(StringPath.t, StringPath.t, StringPath.t) :: nil
 	def write_deb(out_deb, control_tar_gz, data_tar_xz) do
-		alias Debpress.Util
-
 		temp = Util.temp_dir("debpress")
 		d_b = Path.join(temp, "debian-binary")
 		File.write!(d_b, "2.0\n")

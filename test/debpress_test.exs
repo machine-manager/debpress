@@ -108,6 +108,10 @@ defmodule DebpressTest do
 		"""
 	end
 
+	test "write_control_tar_gz works" do
+
+	end
+
 	test "write_deb works" do
 		temp = Debpress.Util.temp_dir("debpress_test")
 
