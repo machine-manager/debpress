@@ -34,10 +34,17 @@ defmodule Debpress.Util do
 		end
 	end
 
-	@spec make_temp_path(String.t, String.t) :: String.t
-	def make_temp_path(prefix, extension) do
+	@spec temp_path(String.t, String.t) :: String.t
+	def temp_path(prefix, extension \\ "") do
 		random = :crypto.strong_rand_bytes(16) |> Base.url_encode64(padding: false)
 		Path.join(System.tmp_dir, "#{prefix}-#{random}")
 		|> append_if(String.first(extension), ".#{extension}")
+	end
+
+	@spec temp_dir(String.t) :: String.t
+	def temp_dir(prefix) do
+		p = temp_path(prefix)
+		File.mkdir_p!(p)
+		p
 	end
 end

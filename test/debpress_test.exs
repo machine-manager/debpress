@@ -107,4 +107,24 @@ defmodule DebpressTest do
 		 to describe them
 		"""
 	end
+
+	test "write_deb works" do
+		temp = Debpress.Util.temp_dir("debpress_test")
+
+		control_tar_gz = Path.join(temp, "control.tar.gz")
+		data_tar_xz = Path.join(temp, "data.tar.xz")
+		File.write!(control_tar_gz, "")
+		File.write!(data_tar_xz, "")
+
+		out_deb = Path.join(temp, "out.deb")
+		Debpress.write_deb(out_deb, control_tar_gz, data_tar_xz)
+
+		assert File.regular?(out_deb)
+		size = File.stat!(out_deb).size
+		assert size > 0
+
+		# Calling write_deb again overwrites the existing file
+		Debpress.write_deb(out_deb, control_tar_gz, data_tar_xz)
+		assert File.stat!(out_deb).size == size
+	end
 end

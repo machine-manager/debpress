@@ -83,8 +83,14 @@ defmodule Debpress do
 
 	@spec write_deb(StringPath.t, StringPath.t, StringPath.t) :: nil
 	def write_deb(out_deb, control_tar_gz, data_tar_xz) do
-		Debpress.Util.rm_f!(out_deb)
-		{_, 0} = System.cmd("ar", ["-qc", out_deb, "debian-binary", control_tar_gz, data_tar_xz])
+		alias Debpress.Util
+
+		temp = Util.temp_dir("debpress")
+		d_b = Path.join(temp, "debian-binary")
+		File.write!(d_b, "2.0\n")
+
+		Util.rm_f!(out_deb)
+		{_, 0} = System.cmd("ar", ["-qc", out_deb, d_b, control_tar_gz, data_tar_xz])
 		nil
 	end
 end
