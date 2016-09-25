@@ -18,32 +18,32 @@ defmodule Debpress do
 
 		@enforce_keys [:name, :version, :architecture, :maintainer, :depends, :short_description]
 		defstruct \
-			name: nil,
-			version: nil,
-			architecture: nil,
-			maintainer: nil,
+			name:              nil,
+			version:           nil,
+			architecture:      nil,
+			maintainer:        nil,
 			installed_size_kb: nil,
-			pre_depends: [],
-			depends: [],
-			provides: [],
+			pre_depends:       [],
+			depends:           [],
+			provides:          [],
 			# See docs/sections.html
-			section: nil,
-			priority: nil,
+			section:           nil,
+			priority:          nil,
 			short_description: nil,
-			long_description: nil
+			long_description:  nil
 		@type t :: %Control{
-			name: String.t,
-			version: String.t,
-			architecture: String.t,
-			maintainer: String.t,
+			name:              String.t,
+			version:           String.t,
+			architecture:      String.t,
+			maintainer:        String.t,
 			installed_size_kb: non_neg_integer() | nil,
-			pre_depends: [String.t],
-			depends: [String.t],
-			provides: [String.t],
-			section: String.t | nil,
-			priority: Control.priority | nil,
+			pre_depends:       [String.t],
+			depends:           [String.t],
+			provides:          [String.t],
+			section:           String.t | nil,
+			priority:          Control.priority | nil,
 			short_description: String.t,
-			long_description: String.t | nil
+			long_description:  String.t | nil
 		}
 	end
 
@@ -66,12 +66,12 @@ defmodule Debpress do
 		"""
 		|> append_if(c.installed_size_kb, "Installed-Size: #{c.installed_size_kb}\n")
 		|> append_if(c.pre_depends != [], "Pre-Depends: #{c.pre_depends |> Enum.join(", ")}\n")
-		|> append_if(c.depends != [], "Depends: #{c.depends |> Enum.join(", ")}\n")
-		|> append_if(c.provides != [], "Provides: #{c.provides |> Enum.join(", ")}\n")
-		|> append_if(c.priority, "Priority: #{c.priority |> Atom.to_string}\n")
-		|> append_if(c.section, "Section: #{c.section}\n")
-		|> Kernel.<>("Description: #{c.short_description}\n")
-		|> append_if(c.long_description, prefix_every_line(c.long_description, " ") <> "\n")
+		|> append_if(c.depends     != [], "Depends: #{c.depends |> Enum.join(", ")}\n")
+		|> append_if(c.provides    != [], "Provides: #{c.provides |> Enum.join(", ")}\n")
+		|> append_if(c.priority,          "Priority: #{c.priority |> Atom.to_string}\n")
+		|> append_if(c.section,           "Section: #{c.section}\n")
+		|> Kernel.<>(                     "Description: #{c.short_description}\n")
+		|> append_if(c.long_description,  prefix_every_line(c.long_description, " ") <> "\n")
 	end
 
 	@allowed_script_keys MapSet.new([:preinst, :postinst, :prerm, :postrm])
