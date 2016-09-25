@@ -78,7 +78,7 @@ defmodule DebpressTest do
 			version:           "0.1",
 			architecture:      "all",
 			maintainer:        "nobody",
-			installed_size_kb: "101",
+			installed_size_kb: 101,
 			pre_depends:       ["dpkg (>= 1.14.0)"],
 			depends:           ["python-twisted", "python (>= 2.7)"],
 			provides:          ["www-browser", "some-other-thing"],
