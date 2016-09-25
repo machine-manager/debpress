@@ -25,41 +25,41 @@ defmodule DebpressTest do
 
 		assert_raise ArgumentError, msg, fn ->
 			Code.eval_string(~s(%Debpress.Control{
-				name: "name",
-				version: "1.0",
+				name:         "name",
+				version:      "1.0",
 				architecture: "amd64",
-				maintainer: "nobody"
+				maintainer:   "nobody"
 			}))
 		end
 
 		assert_raise ArgumentError, msg, fn ->
 			Code.eval_string(~s(%Debpress.Control{
-				name: "name",
-				version: "1.0",
+				name:         "name",
+				version:      "1.0",
 				architecture: "amd64",
-				maintainer: "nobody",
-				depends: []
+				maintainer:   "nobody",
+				depends:      []
 			}))
 		end
 
 		# This one works
 		Code.eval_string(~s(%Debpress.Control{
-			name: "name",
-			version: "1.0",
-			architecture: "amd64",
-			maintainer: "nobody",
-			depends: [],
+			name:              "name",
+			version:           "1.0",
+			architecture:      "amd64",
+			maintainer:        "nobody",
+			depends:           [],
 			short_description: "hello"
 		}))
 	end
 
 	test "control_file works when given bare minimum Control" do
 		control = %Debpress.Control{
-			name: "demo",
-			version: "0.1",
-			architecture: "all",
-			maintainer: "nobody",
-			depends: [],
+			name:              "demo",
+			version:           "0.1",
+			architecture:      "all",
+			maintainer:        "nobody",
+			depends:           [],
 			short_description: "a demo",
 		}
 
@@ -74,18 +74,18 @@ defmodule DebpressTest do
 
 	test "control_file works when given all Control options" do
 		control = %Debpress.Control{
-			name: "demo",
-			version: "0.1",
-			architecture: "all",
-			maintainer: "nobody",
+			name:              "demo",
+			version:           "0.1",
+			architecture:      "all",
+			maintainer:        "nobody",
 			installed_size_kb: "101",
-			pre_depends: ["dpkg (>= 1.14.0)"],
-			depends: ["python-twisted", "python (>= 2.7)"],
-			provides: ["www-browser", "some-other-thing"],
-			section: "misc",
-			priority: :optional,
+			pre_depends:       ["dpkg (>= 1.14.0)"],
+			depends:           ["python-twisted", "python (>= 2.7)"],
+			provides:          ["www-browser", "some-other-thing"],
+			section:           "misc",
+			priority:          :optional,
 			short_description: "a demo",
-			long_description: "It does\nso many things\nthat this file\ncan't even begin\nto describe them"
+			long_description:  "It does\nso many things\nthat this file\ncan't even begin\nto describe them"
 		}
 
 		assert Debpress.control_file(control) == """
@@ -147,7 +147,7 @@ defmodule DebpressTest do
 		temp = Debpress.Util.temp_dir("debpress_test")
 
 		control_tar_gz = Path.join(temp, "control.tar.gz")
-		data_tar_xz = Path.join(temp, "data.tar.xz")
+		data_tar_xz    = Path.join(temp, "data.tar.xz")
 		File.write!(control_tar_gz, "")
 		File.write!(data_tar_xz, "")
 
