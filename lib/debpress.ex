@@ -110,12 +110,6 @@ defmodule Debpress do
 		nil
 	end
 
-	@doc "Runs tar with the right arguments (--owner=root, group=root) to create data.tar.xz"
-	@spec write_data_tar_xz(String.t) :: nil
-	def write_data_tar_xz(data_tar_xz) do
-		
-	end
-
 	@spec write_deb(StringPath.t, StringPath.t, StringPath.t) :: nil
 	def write_deb(out_deb, control_tar_gz, data_tar_xz) do
 		temp = Util.temp_dir("debpress")
