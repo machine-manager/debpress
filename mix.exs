@@ -17,6 +17,8 @@ defmodule Debpress.Mixfile do
 	end
 
 	defp deps do
-		[{:dialyxir, "~> 0.3.5", only: [:dev]}]
+		[
+			{:dialyxir, "~> 0.3.5", only: :dev}
+		]
 	end
 end
