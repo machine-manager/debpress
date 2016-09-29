@@ -1,1 +1,2 @@
-%{"dialyxir": {:git, "/ejail/code/erlang/dialyxir", "7fadb124c74e79e826a7dbe3c9ed367b763a06fb", [branch: "bien"]}}
+%{"dialyxir": {:git, "/home/at/code/erlang/dialyxir", "7fadb124c74e79e826a7dbe3c9ed367b763a06fb", [branch: "bien"]},
+  "gears": {:git, "/home/at/code/erlang/gears", "8bd6648e22c04bea847d29a5cd436d8491270d49", [branch: "bien"]}}

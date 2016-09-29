@@ -1,5 +1,7 @@
 defmodule DebpressTest do
 	use ExUnit.Case
+	alias Gears.FileUtil
+
 	doctest Debpress
 
 	test "can't construct a Control without mandatory keys" do
@@ -109,7 +111,7 @@ defmodule DebpressTest do
 	end
 
 	test "write_control_tar_gz works with empty scripts Map" do
-		temp = Debpress.Util.temp_dir("debpress_test")
+		temp = FileUtil.temp_dir("debpress_test")
 		control_tar_gz = Path.join(temp, "control.tar.gz")
 
 		Debpress.write_control_tar_gz(control_tar_gz, "my control file", %{})
@@ -120,7 +122,7 @@ defmodule DebpressTest do
 	end
 
 	test "write_control_tar_gz works with non-empty scripts Map" do
-		temp = Debpress.Util.temp_dir("debpress_test")
+		temp = FileUtil.temp_dir("debpress_test")
 		control_tar_gz = Path.join(temp, "control.tar.gz")
 
 		Debpress.write_control_tar_gz(control_tar_gz, "my control file", %{preinst: "preinst"})
@@ -144,7 +146,7 @@ defmodule DebpressTest do
 	end
 
 	test "write_deb works" do
-		temp = Debpress.Util.temp_dir("debpress_test")
+		temp = FileUtil.temp_dir("debpress_test")
 
 		control_tar_gz = Path.join(temp, "control.tar.gz")
 		data_tar_xz    = Path.join(temp, "data.tar.xz")

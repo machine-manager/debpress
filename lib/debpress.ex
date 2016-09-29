@@ -1,5 +1,5 @@
 defmodule Debpress do
-	alias Debpress.Util
+	alias Gears.FileUtil
 
 	defmodule BadControl do
 		defexception message: nil
@@ -56,7 +56,7 @@ defmodule Debpress do
 	@doc "Takes a Control struct and returns a string containing a valid control file"
 	@spec control_file(Control) :: String.t
 	def control_file(c) do
-		import Debpress.Util, only: [append_if: 3]
+		import Gears.LangUtil, only: [append_if: 3]
 
 		"""
 		Package: #{c.name}
@@ -83,7 +83,7 @@ defmodule Debpress do
 		optional(:postrm) => String.t
 	}) :: nil
 	def write_control_tar_gz(control_tar_gz, control, scripts) do
-		temp = Util.temp_dir("debpress")
+		temp = FileUtil.temp_dir("debpress")
 
 		for script_key <- Map.keys(scripts) do
 			if not MapSet.member?(@allowed_script_keys, script_key) do
@@ -112,11 +112,11 @@ defmodule Debpress do
 
 	@spec write_deb(StringPath.t, StringPath.t, StringPath.t) :: nil
 	def write_deb(out_deb, control_tar_gz, data_tar_xz) do
-		temp = Util.temp_dir("debpress")
+		temp = FileUtil.temp_dir("debpress")
 		d_b = Path.join(temp, "debian-binary")
 		File.write!(d_b, "2.0\n")
 
-		Util.rm_f!(out_deb)
+		FileUtil.rm_f!(out_deb)
 		{_, 0} = System.cmd("ar", ["-qc", out_deb, d_b, control_tar_gz, data_tar_xz])
 		nil
 	end
