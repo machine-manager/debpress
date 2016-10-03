@@ -110,14 +110,19 @@ defmodule Debpress do
 		nil
 	end
 
-	@spec write_deb(StringPath.t, StringPath.t, StringPath.t) :: nil
-	def write_deb(out_deb, control_tar_gz, data_tar_xz) do
+	@spec write_deb(StringPath.t, StringPath.t, StringPath.t | nil) :: nil
+	def write_deb(out_deb, control_tar_gz, data_tar_xz \\ nil) do
 		temp = FileUtil.temp_dir("debpress")
 		d_b = Path.join(temp, "debian-binary")
 		File.write!(d_b, "2.0\n")
 
 		FileUtil.rm_f!(out_deb)
-		{_, 0} = System.cmd("ar", ["-qc", out_deb, d_b, control_tar_gz, data_tar_xz])
+		args = ["-qc", out_deb, d_b, control_tar_gz]
+		args = case data_tar_xz do
+			nil -> args
+			_   -> args ++ [data_tar_xz]
+		end
+		{_, 0} = System.cmd("ar", args)
 		nil
 	end
 end

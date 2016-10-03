@@ -145,7 +145,7 @@ defmodule DebpressTest do
 		end
 	end
 
-	test "write_deb works" do
+	test "write_deb works with non-nil data_tar_xz" do
 		temp = FileUtil.temp_dir("debpress_test")
 
 		control_tar_gz = Path.join(temp, "control.tar.gz")
@@ -163,5 +163,19 @@ defmodule DebpressTest do
 		# Calling write_deb again overwrites the existing file
 		Debpress.write_deb(out_deb, control_tar_gz, data_tar_xz)
 		assert File.stat!(out_deb).size == size
+	end
+
+	test "write_deb works with nil data_tar_xz" do
+		temp = FileUtil.temp_dir("debpress_test")
+
+		control_tar_gz = Path.join(temp, "control.tar.gz")
+		File.write!(control_tar_gz, "")
+
+		out_deb = Path.join(temp, "out.deb")
+		Debpress.write_deb(out_deb, control_tar_gz)
+
+		assert File.regular?(out_deb)
+		size = File.stat!(out_deb).size
+		assert size > 0
 	end
 end
