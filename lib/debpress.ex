@@ -56,22 +56,24 @@ defmodule Debpress do
 	@doc "Takes a Control struct and returns a string containing a valid control file"
 	@spec control_file(Control) :: String.t
 	def control_file(c) do
-		import Gears.LangUtil, only: [append_if: 3]
+		import Gears.LangUtil, only: [oper_if: 3]
 
-		"""
+		s = """
 		Package: #{c.name}
 		Version: #{c.version}
 		Architecture: #{c.architecture}
 		Maintainer: #{c.maintainer}
 		"""
-		|> append_if(c.installed_size_kb, "Installed-Size: #{c.installed_size_kb}\n")
-		|> append_if(c.pre_depends != [], "Pre-Depends: #{c.pre_depends |> Enum.join(", ")}\n")
-		|> append_if(c.depends     != [], "Depends: #{c.depends |> Enum.join(", ")}\n")
-		|> append_if(c.provides    != [], "Provides: #{c.provides |> Enum.join(", ")}\n")
-		|> append_if(c.priority,          "Priority: #{c.priority |> Atom.to_string}\n")
-		|> append_if(c.section,           "Section: #{c.section}\n")
-		|> Kernel.<>(                     "Description: #{c.short_description}\n")
-		|> append_if(c.long_description,  prefix_every_line(c.long_description, " ") <> "\n")
+		{s, &Kernel.<>/2}
+			|> oper_if(c.installed_size_kb, "Installed-Size: #{c.installed_size_kb}\n")
+			|> oper_if(c.pre_depends != [], "Pre-Depends: #{c.pre_depends |> Enum.join(", ")}\n")
+			|> oper_if(c.depends     != [], "Depends: #{c.depends |> Enum.join(", ")}\n")
+			|> oper_if(c.provides    != [], "Provides: #{c.provides |> Enum.join(", ")}\n")
+			|> oper_if(c.priority,          "Priority: #{c.priority |> Atom.to_string}\n")
+			|> oper_if(c.section,           "Section: #{c.section}\n")
+			|> oper_if(true,                "Description: #{c.short_description}\n")
+			|> oper_if(c.long_description,  prefix_every_line(c.long_description, " ") <> "\n")
+			|> elem(0)
 	end
 
 	@allowed_script_keys MapSet.new([:preinst, :postinst, :prerm, :postrm])
