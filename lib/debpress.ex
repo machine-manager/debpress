@@ -50,7 +50,10 @@ defmodule Debpress do
 	@docp "Prefixes every line in some multi-line text with a given prefix string"
 	@spec prefix_every_line(String.t, String.t) :: String.t
 	defp prefix_every_line(text, prefix) do
-		text |> String.split("\n") |> Enum.map(fn line -> prefix <> line end) |> Enum.join("\n")
+		text
+		|> String.split("\n")
+		|> Enum.map(fn line -> prefix <> line end)
+		|> Enum.join("\n")
 	end
 
 	@doc "Takes a Control struct and returns a string containing a valid control file"
@@ -65,15 +68,15 @@ defmodule Debpress do
 		Maintainer: #{c.maintainer}
 		"""
 		{s, &Kernel.<>/2}
-			|> oper_if(c.installed_size_kb, "Installed-Size: #{c.installed_size_kb}\n")
-			|> oper_if(c.pre_depends != [], "Pre-Depends: #{c.pre_depends |> Enum.join(", ")}\n")
-			|> oper_if(c.depends     != [], "Depends: #{c.depends |> Enum.join(", ")}\n")
-			|> oper_if(c.provides    != [], "Provides: #{c.provides |> Enum.join(", ")}\n")
-			|> oper_if(c.priority,          "Priority: #{c.priority |> Atom.to_string}\n")
-			|> oper_if(c.section,           "Section: #{c.section}\n")
-			|> oper_if(true,                "Description: #{c.short_description}\n")
-			|> oper_if(c.long_description,  prefix_every_line(c.long_description, " ") <> "\n")
-			|> elem(0)
+		|> oper_if(c.installed_size_kb, "Installed-Size: #{c.installed_size_kb}\n")
+		|> oper_if(c.pre_depends != [], "Pre-Depends: #{c.pre_depends |> Enum.join(", ")}\n")
+		|> oper_if(c.depends     != [], "Depends: #{c.depends   |> Enum.join(", ")}\n")
+		|> oper_if(c.provides    != [], "Provides: #{c.provides |> Enum.join(", ")}\n")
+		|> oper_if(c.priority,          "Priority: #{c.priority |> Atom.to_string}\n")
+		|> oper_if(c.section,           "Section: #{c.section}\n")
+		|> oper_if(true,                "Description: #{c.short_description}\n")
+		|> oper_if(c.long_description,  prefix_every_line(c.long_description, " ") <> "\n")
+		|> elem(0)
 	end
 
 	@allowed_script_keys MapSet.new([:preinst, :postinst, :prerm, :postrm])
