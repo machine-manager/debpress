@@ -12,10 +12,6 @@ defmodule Debpress.Mixfile do
 		]
 	end
 
-	def application do
-		[applications: [:logger, :ex_unit]]
-	end
-
 	defp deps do
 		[
 			{:gears, "~> 0.2.0"},
