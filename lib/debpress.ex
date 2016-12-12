@@ -47,7 +47,7 @@ defmodule Debpress do
 		}
 	end
 
-	@docp "Prefixes every line in some multi-line text with a given prefix string"
+	# Prefixes every line in some multi-line text with a given prefix string
 	@spec prefix_every_line(String.t, String.t) :: String.t
 	defp prefix_every_line(text, prefix) do
 		text
