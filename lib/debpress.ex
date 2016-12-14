@@ -9,10 +9,6 @@ defmodule Debpress do
 		defexception message: nil
 	end
 
-	defmodule StringPath do
-		@type t :: :binary
-	end
-
 	defmodule Control do
 		@type priority :: :required | :important | :standard | :optional | :extra
 
@@ -81,7 +77,7 @@ defmodule Debpress do
 
 	@allowed_script_keys MapSet.new([:preinst, :postinst, :prerm, :postrm])
 
-	@spec write_control_tar_gz(StringPath.t, StringPath.t, %{
+	@spec write_control_tar_gz(String.t, String.t, %{
 		optional(:preinst) => String.t,
 		optional(:postinst) => String.t,
 		optional(:prerm) => String.t,
@@ -115,7 +111,7 @@ defmodule Debpress do
 		nil
 	end
 
-	@spec write_deb(StringPath.t, StringPath.t, StringPath.t) :: nil
+	@spec write_deb(String.t, String.t, String.t) :: nil
 	def write_deb(out_deb, control_tar_gz, data_tar_xz) do
 		temp = FileUtil.temp_dir("debpress")
 		d_b = Path.join(temp, "debian-binary")
