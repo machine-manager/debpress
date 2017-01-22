@@ -87,7 +87,7 @@ defmodule Debpress do
 		temp = FileUtil.temp_dir("debpress")
 
 		for script_key <- Map.keys(scripts) do
-			if not MapSet.member?(@allowed_script_keys, script_key) do
+			if script_key not in @allowed_script_keys do
 				raise UnexpectedScriptKey,
 					message: """
 						Got unexpected key #{inspect script_key}, \
