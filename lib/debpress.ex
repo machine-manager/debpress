@@ -111,14 +111,21 @@ defmodule Debpress do
 		nil
 	end
 
+	@doc """
+	Writes a .deb file containing `control_tar_gz` and `data_tar`.
+
+	`out_deb`        - create the .deb file at this path.
+	`control_tar_gz` - a filename pointing to a `control.tar.gz` file.
+	`data_tar`       - a filename pointing to a `data.tar.xz` or `data.tar.gz` file.
+	"""
 	@spec write_deb(String.t, String.t, String.t) :: nil
-	def write_deb(out_deb, control_tar_gz, data_tar_xz) do
+	def write_deb(out_deb, control_tar_gz, data_tar) do
 		temp = FileUtil.temp_dir("debpress")
 		d_b = Path.join(temp, "debian-binary")
 		File.write!(d_b, "2.0\n")
 
 		FileUtil.rm_f!(out_deb)
-		{_, 0} = System.cmd("ar", ["-qc", out_deb, d_b, control_tar_gz, data_tar_xz])
+		{_, 0} = System.cmd("ar", ["-qc", out_deb, d_b, control_tar_gz, data_tar])
 		nil
 	end
 end
