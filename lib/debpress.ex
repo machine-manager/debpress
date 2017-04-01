@@ -106,7 +106,7 @@ defmodule Debpress do
 
 		script_files = Map.keys(scripts) |> Enum.map(&Atom.to_string/1)
 		{_, 0} = System.cmd("tar",
-			["--owner=root", "--group=root", "-C", temp, "-cf", control_tar_gz, "--", "control"] ++ script_files
+			["--owner=root", "--group=root", "-C", temp, "--force-local", "-cf", control_tar_gz, "--", "control"] ++ script_files
 		)
 		nil
 	end
