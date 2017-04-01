@@ -88,11 +88,11 @@ defmodule Debpress do
 
 		for script_key <- Map.keys(scripts) do
 			if script_key not in @allowed_script_keys do
-				raise UnexpectedScriptKey,
-					message: """
-						Got unexpected key #{inspect script_key}, \
-						which is not one of #{inspect @allowed_script_keys}
-						"""
+				raise(UnexpectedScriptKey,
+					"""
+					Got unexpected key #{inspect script_key}, \
+					which is not one of #{inspect @allowed_script_keys}
+					""")
 			end
 			script_path = Path.join(temp, Atom.to_string(script_key))
 			script = Map.get(scripts, script_key)
