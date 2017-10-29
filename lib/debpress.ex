@@ -113,6 +113,7 @@ defmodule Debpress do
 
 	@doc """
 	Writes a .deb file containing `control_tar_gz` and `data_tar`.
+	Assumes `ar` is installed (from package "binutils").
 
 	`out_deb`        - create the .deb file at this path.
 	`control_tar_gz` - a filename pointing to a `control.tar.gz` file.
