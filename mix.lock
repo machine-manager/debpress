@@ -1,2 +1,0 @@
-%{"dialyxir": {:git, "/home/at/code/erlang/dialyxir", "7fadb124c74e79e826a7dbe3c9ed367b763a06fb", [branch: "bien"]},
-  "gears": {:git, "/home/at/code/erlang/gears", "993c5abc3803ec40e5eec5a8e529eac921e49563", [branch: "bien"]}}
